@@ -1,0 +1,25 @@
+issue_key,summary,description,issue_type,priority,assignee,created_date,labels
+ABC-123,Login Error,Unable to login to the application.,Bug,High,john.doe@example.com,2024-06-20,security
+DEF-456,New Feature Request,Add a search function to the product.,Feature,Medium,jane.smith@example.com,2024-06-21,user-experience
+GHI-789,Standby Performance Issue,Slow loading times on mobile devices.,Performance,High,dev_team@example.com,2024-06-22,mobile
+JKL-012,Missing standby Documentation,API documentation for the new payment gateway is missing.,Task,Medium,documentation@example.com,2024-06-19,api
+MNO-345,Broken Link,Link to external resource is broken.,Bug,Low,webmaster@example.com,2024-06-20,website
+PQR-678,Design Request,Update the color scheme of the login page.,Story,Medium,designteam@example.com,2024-06-21,ui
+STU-901,Database Error,Database connection slow error occurring intermittently.,Bug,High,db_admin@example.com,2024-06-22,database
+VWX-123,Testing Issue,Unit tests for the new feature are failing.,Task,Medium,qa_team@example.com,2024-06-18,testing
+YZX-456,Deployment Issue,Error encountered during slow deployment to production.,Bug,High,ops@example.com,2024-06-19,deployment
+AAA-789,Server standbyOutage,Server is unresponsive and causing downtime.,Incident,Critical,ops@example.com,2024-06-23,server
+BBB-111,Feature Request: Enhance user profile management.,SQL connection slow error occurring,Improvement,High,product_manager@example.com,2024-06-18,user
+CCC-222,Payment processing failing for certain transactions.,Update the font scheme of the login page,Improvement,low,payments@example.com,2024-06-19,finance
+DDD-333,Update marketing standby materials with new branding.,API documentation for the old gateway,Improvement,Medium,marketing@example.com,2024-06-20,branding
+EEE-444,Implement a new user standby onboarding flow.,Link to internal resource is broken.,Bug,Intermediate,product_owner@example.com,2024-06-21,security
+FFF-555,Image upload functionality not working.,Settings are missing,Improvement,Intermediate,frontend_dev@example.com,2024-06-22,frontend
+GGG-666,Review code for  standby security vulnerabilities.,could not capture bugs ,Bug,low,security_analyst@example.com,2024-06-18,security
+HHH-777,Incorrect data displayed on reports.,able to login to the application,task,low,data_analyst@example.com,2024-06-19,reporting
+III-888,Redesign the product homepage.,Now new methods defined,Improvement,	Critical,frontend_dev@example.com,2024-06-20,ui
+JJJ-999,Permission issue for standby preventing users from accessing resources.,Authentication error,Bug,high,security@example.com,2024-06-21,security
+
+ECE-444,Implement a new user onboarding flow.,Link to internal resource is broken.,Bug,high,product_owner@example.com,2024-06-21,security
+JYJ-999,Permission issue for standby preventing users from accessing resources.,Authentication error,Bug,high,security@example.com,2024-06-21,security
+
+

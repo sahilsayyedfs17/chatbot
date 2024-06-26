@@ -1,0 +1,437 @@
+{
+    "question_answers": [
+        {
+            "question": "what are the high priority issues related to standby",
+            "answers": [
+                {
+                    "issue_key": "GHI-789",
+                    "summary": "Standby Performance Issue",
+                    "description": "Slow loading times on mobile devices.",
+                    "issue_type": "Performance",
+                    "priority": "High",
+                    "assignee": "dev_team@example.com",
+                    "created_date": "2024-06-22",
+                    "labels": "mobile"
+                },
+                
+                {
+                    "issue_key": "JJJ-999",
+                    "summary": "Permission issue for standby preventing users from accessing resources.",
+                    "description": "Authentication error",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "security@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                }
+            ]
+        },
+
+        {
+            "question": "what are the medium priority issues related to standby",
+            "answers": [
+                {
+                    "issue_key": "JKL-012",
+                    "summary": "Missing standby Documentation",
+                    "description": "API documentation for the new payment gateway is missing.",
+                    "issue_type": "Task",
+                    "priority": "Medium",
+                    "assignee": "documentation@example.com",
+                    "created_date": "2024-06-19",
+                    "labels": "api"
+                },
+                {
+                    "issue_key": "DDD-333",
+                    "summary": "Update marketing standby materials with new branding.",
+                    "description": "API documentation for the old gateway",
+                    "issue_type": "Improvement",
+                    "priority": "Medium",
+                    "assignee": "marketing@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "branding"
+                }
+            ]
+        },
+        {
+            "question": "what are the issues that has labels as security",
+            "answers": [
+                {
+                    "issue_key": "ABC-123",
+                    "summary": "Login Error",
+                    "description": "Unable to login to the application.",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "john.doe@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "EEE-444",
+                    "summary": "Implement a new user standby onboarding flow.",
+                    "description": "Link to internal resource is broken.",
+                    "issue_type": "High",
+                    "priority": "Intermediate",
+                    "assignee": "product_owner@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "GGG-666",
+                    "summary": "Review code for standby security vulnerabilities.",
+                    "description": "could not capture bugs",
+                    "issue_type": "Medium",
+                    "priority": "low",
+                    "assignee": "security_analyst@example.com",
+                    "created_date": "2024-06-18",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "JJJ-999",
+                    "summary": "Permission issue for standby preventing users from accessing resources.",
+                    "description": "Authentication error",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "security@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                }
+            ]
+        },
+
+        {
+            "question": "what are the high priority issues related to security",
+            "answers": [
+                {
+                    "issue_key": "ABC-123",
+                    "summary": "Login Error",
+                    "description": "Unable to login to the application.",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "john.doe@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "JJJ-999",
+                    "summary": "Permission issue for standby preventing users from accessing resources.",
+                    "description": "Authentication error",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "security@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                }
+                
+            ]
+        },
+
+        {
+            "question": "what are the high priority issues related to performance",
+            "answers": [
+                {
+                    "issue_key": "GHI-789",
+                    "summary": "Standby Performance Issue",
+                    "description": "Slow loading times on mobile devices.",
+                    "issue_type": "Performance",
+                    "priority": "High",
+                    "assignee": "dev_team@example.com",
+                    "created_date": "2024-06-22",
+                    "labels": "mobile"
+                }
+            ]
+        },
+
+        {
+            "question": "what are the critical priority issues?",
+            "answers": [
+                {
+                    "issue_key": "AAA-789",
+                    "summary": "Server Outage",
+                    "description": "Server is unresponsive and causing downtime.",
+                    "issue_type": "Incident",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-23",
+                    "labels": "server"
+                },
+                {
+                    "issue_key": "YYY-123",
+                    "summary": "Critical Data Loss",
+                    "description": "Data loss due to system error.",
+                    "issue_type": "Bug",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-24",
+                    "labels": "database"
+                }
+            ]
+        },
+
+        {
+            "question": "what are the bug issues?",
+            "answers": [
+                {
+                    "issue_key": "ABC-123",
+                    "summary": "Login Error",
+                    "description": "Unable to login to the application.",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "john.doe@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "JJJ-999",
+                    "summary": "Permission issue for standby preventing users from accessing resources.",
+                    "description": "Authentication error",
+                    "issue_type": "Bug",
+                    "priority": "high",
+                    "assignee": "security@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "MNO-345",
+                    "summary": "Broken Link",
+                    "description": "Link to external resource is broken.",
+                    "issue_type": "Bug",
+                    "priority": "Low",
+                    "assignee": "webmaster@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "website"
+                },
+                {
+                    "issue_key": "YYY-123",
+                    "summary": "Critical Data Loss",
+                    "description": "Data loss due to system error.",
+                    "issue_type": "Bug",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-24",
+                    "labels": "database"
+                }
+            ]
+        },
+
+        {
+            "question": "what are the issues assigned to ops@example.com?",
+            "answers": [
+                {
+                    "issue_key": "AAA-789",
+                    "summary": "Server Outage",
+                    "description": "Server is unresponsive and causing downtime.",
+                    "issue_type": "Incident",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-23",
+                    "labels": "server"
+                },
+                {
+                    "issue_key": "YYY-123",
+                    "summary": "Critical Data Loss",
+                    "description": "Data loss due to system error.",
+                    "issue_type": "Bug",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-24",
+                    "labels": "database"
+                }
+            ]
+        },
+
+        {
+            "question": "what are the issues assigned to ops@example.com?",
+            "answers": [
+                {
+                    "issue_key": "AAA-789",
+                    "summary": "Server Outage",
+                    "description": "Server is unresponsive and causing downtime.",
+                    "issue_type": "Incident",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-23",
+                    "labels": "server"
+                },
+                {
+                    "issue_key": "YYY-123",
+                    "summary": "Critical Data Loss",
+                    "description": "Data loss due to system error.",
+                    "issue_type": "Bug",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-24",
+                    "labels": "database"
+                }
+            ]
+        },
+
+        {
+            "question": "what are the bug issues?",
+            "answers": [
+                {
+                    "issue_key": "ABC-123",
+                    "summary": "Login Error",
+                    "description": "Unable to login to the application.",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "john.doe@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "JJJ-999",
+                    "summary": "Permission issue for standby preventing users from accessing resources.",
+                    "description": "Authentication error",
+                    "issue_type": "Bug",
+                    "priority": "high",
+                    "assignee": "security@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "MNO-345",
+                    "summary": "Broken Link",
+                    "description": "Link to external resource is broken.",
+                    "issue_type": "Bug",
+                    "priority": "Low",
+                    "assignee": "webmaster@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "website"
+                },
+                {
+                    "issue_key": "YYY-123",
+                    "summary": "Critical Data Loss",
+                    "description": "Data loss due to system error.",
+                    "issue_type": "Bug",
+                    "priority": "Critical",
+                    "assignee": "ops@example.com",
+                    "created_date": "2024-06-24",
+                    "labels": "database"
+                }
+            ]
+        },
+        {
+            "question": "what are the low priority issues related to standby",
+            "answers": [
+                {
+                    "issue_key": "GGG-666",
+                    "summary": "Review code for standby security vulnerabilities.",
+                    "description": "could not capture bugs",
+                    "issue_type": "Bug",
+                    "priority": "low",
+                    "assignee": "security_analyst@example.com",
+                    "created_date": "2024-06-18",
+                    "labels": "security"
+                }
+                
+            ]
+        },
+        {
+            "question": "what are the issues related to standby",
+            "answers": [
+                {
+                    "issue_key": "GHI-789",
+                    "summary": "Standby Performance Issue",
+                    "description": "Slow loading times on mobile devices.",
+                    "issue_type": "Performance",
+                    "priority": "High",
+                    "assignee": "dev_team@example.com",
+                    "created_date": "2024-06-22",
+                    "labels": "mobile"
+                },
+                {
+                    "issue_key": "JKL-012",
+                    "summary": "Missing standby Documentation",
+                    "description": "API documentation for the new payment gateway is missing.",
+                    "issue_type": "Task",
+                    "priority": "Medium",
+                    "assignee": "documentation@example.com",
+                    "created_date": "2024-06-19",
+                    "labels": "api"
+                },
+                {
+                    "issue_key": "DDD-333",
+                    "summary": "Update marketing standby materials with new branding.",
+                    "description": "API documentation for the old gateway",
+                    "issue_type": "Improvement",
+                    "priority": "Medium",
+                    "assignee": "marketing@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "branding"
+                },
+                {
+                    "issue_key": "EEE-444",
+                    "summary": "Implement a new user standby onboarding flow.",
+                    "description": "Link to internal resource is broken.",
+                    "issue_type": "High",
+                    "priority": "Intermediate",
+                    "assignee": "product_owner@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "GGG-666",
+                    "summary": "Review code for standby security vulnerabilities.",
+                    "description": "could not capture bugs",
+                    "issue_type": "Bug",
+                    "priority": "low",
+                    "assignee": "security_analyst@example.com",
+                    "created_date": "2024-06-18",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "JJJ-999",
+                    "summary": "Permission issue for standby preventing users from accessing resources.",
+                    "description": "Authentication error",
+                    "issue_type": "Bug",
+                    "priority": "high",
+                    "assignee": "security@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                }
+
+                
+            ]
+        },
+        {
+            "question": "what are the issues related to login",
+            "answers": [
+                
+                {
+                    "issue_key": "ABC-123",
+                    "summary": "Login Error",
+                    "description": "Unable to login to the application.",
+                    "issue_type": "Bug",
+                    "priority": "High",
+                    "assignee": "john.doe@example.com",
+                    "created_date": "2024-06-20",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "EEE-444",
+                    "summary": "Implement a new user standby onboarding flow.",
+                    "description": "Link to internal resource is broken.",
+                    "issue_type": "High",
+                    "priority": "Intermediate",
+                    "assignee": "product_owner@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "security"
+                },
+                {
+                    "issue_key": "PQR-678",
+                    "summary": "Design Request.",
+                    "description": "Update the color scheme of the login page",
+                    "issue_type": "Story",
+                    "priority": "Medium",
+                    "assignee": "designteam@example.com",
+                    "created_date": "2024-06-21",
+                    "labels": "ui"
+                }
+            ]
+        }
+
+
+
+        
+    ]
+}
