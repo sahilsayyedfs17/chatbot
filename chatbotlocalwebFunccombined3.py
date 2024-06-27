@@ -38,20 +38,21 @@ column_synonyms = {
     "issue_type": ["type", "category","Issue_type","Issue Type", "issue type","Issue type"],
     "assignee": ["assigned_to", "responsible","assigned to", "assignee","asign"],
     "created_date": ["date_created", "creation_date", "it created"],
-    "labels": ["tags"],
-    "issue_key": ["issue key","issue","Issue Key","Issue key"]
+    "labels": ["tags","label"],
+    "issue_key": ["issue key","issue","Issue Key","Issue key","ticket no ","Ticket no","Ticket","Ticked Id","ticket Id","ticket id"],
+    "reporter":["Reporter","reported","has raised"],
+    "status":["Status","state"]
 }
 
 # Functions
 
 def map_synonym_to_column(word):
-    # Same
     word_lower = word.lower()
     for column, synonyms in column_synonyms.items():
-        if word_lower == column or word_lower in synonyms:
+        # Check both the column name and its synonyms
+        if word_lower == column or word_lower in map(str.lower, synonyms):
             return column
-    return None
-    ...
+    return None    
 
 def ask_question(query):
     # Initialize regex patterns
@@ -111,112 +112,60 @@ def get_response(question):
         response = ask_question(question)
         return response
 
-def handle_simple_queries(query):
-    # Regex pattern to match simple queries with issue key
-    issue_key_pattern = re.compile(r'\b([A-Za-z0-9]+-[0-9]+)\b')
+import re
 
+# Assuming column_synonyms and map_synonym_to_column are defined as previously
+
+def handle_query(query):
+    query_lower = query.lower()
+    
+    # Patterns to identify query types
+    issue_key_pattern = re.compile(r'\b([A-Za-z0-9]+-[0-9]+)\b')
+    list_keyword_pattern = re.compile(r'related\s+to\s+(\w+)')
+    column_pattern = re.compile(r'(\w+)\s+as\s+(\w+)')
+    complex_pattern = re.compile(r'what\s+are\s+the\s+(.+?)\s+(.+?)\s+issues\s+related\s+to\s+(.+)')
+
+    # Check for simple query (issue key)
     match = issue_key_pattern.search(query)
     if match:
         issue_key = match.group(1)
-        # Find the row in the DataFrame corresponding to the issue key
         filtered_df = df[df['issue_key'] == issue_key]
 
         if filtered_df.empty:
             return f"No information found for issue key {issue_key}"
 
-        # Extract specific information based on user query
-        if 'summary' in query.lower():
-            return filtered_df['summary'].iloc[0]
-        elif 'description' in query.lower():
-            return filtered_df['description'].iloc[0]
-        elif 'issue_type' in query.lower():
-            return filtered_df['issue_type'].iloc[0]
-        elif 'priority' in query.lower():
-            return filtered_df['priority'].iloc[0]
-        elif 'assignee' in query.lower():
-            return filtered_df['assignee'].iloc[0]
-        elif 'created_date' in query.lower():
-            return filtered_df['created_date'].iloc[0]
-        elif 'labels' in query.lower():
-            return filtered_df['labels'].iloc[0]
-        else:
-            return "Query does not specify a valid field (summary, description, issue_type, priority, assignee, created_date, labels)."
-    else:
-        return "No issue key found in the query."
+        for word in query.split():
+            column = map_synonym_to_column(word)
+            if column:
+                return filtered_df[column].iloc[0]
 
-def handle_list_queries(query):
-    # List of keywords to identify list queries
-    list_keywords = {
-        'standby': ['standby'],
-        'server': ['server'],
-        'high priority': ['high priority', 'high prio'],
-        'bug': ['bug'],
-        'ui': ['ui']
-    }
-
-    # Extract keyword from query
-    keyword_pattern = re.compile(r'related\s+to\s+(\w+)')
-    match = keyword_pattern.search(query.lower())
-
-    if match:
-        keyword = match.group(1)
-        # Filter DataFrame based on keyword in summary or description
-        filtered_rows = df[df.apply(lambda row: keyword in row['summary'].lower() or keyword in row['description'].lower(), axis=1)]
-        if not filtered_rows.empty:
-            return filtered_rows.to_dict(orient='records')
-        else:
-            return "No matching issues found."
-
-    # Extract column-based queries
-    column_pattern = re.compile(r'(\w+)\s+as\s+(\w+)')
-    match = column_pattern.search(query.lower())
-
-    if match:
-        column_name = match.group(1)
-        column_content = match.group(2)
-
-        # Filter DataFrame based on column content value
-        filtered_rows = df[df[column_name].str.lower() == column_content.lower()]
-        if not filtered_rows.empty:
-            return filtered_rows.to_dict(orient='records')
-        else:
-            return f"No issues found with {column_name} as {column_content}."
-
-    return "No relevant keywords or values found in the query."
-
-def handle_complex_queries(query):
-    query = query.lower()
-
-    # Regular expression pattern to match the query format
-    pattern = re.compile(r'what\s+are\s+the\s+(.+?)\s+(.+?)\s+issues\s+related\s+to\s+(.+)')
-
-    # Initialize an empty dictionary for column normalization
-    column_normalization = {}
-
-    # Populate column normalization mappings based on unique values in each column
-    for column in df.columns:
-        if df[column].dtype == 'object':  # Process only object/string columns
-            unique_values = df[column].str.lower().unique()
-            normalization_map = {value.lower(): value for value in unique_values}
-            column_normalization[column.lower()] = normalization_map
-
-    # Attempt to match the query pattern
-    match = pattern.match(query)
+        return "Query does not specify a valid field (summary, description, issue_type, priority, assignee, created_date, labels)."
     
+    # Check for complex query
+    match = complex_pattern.match(query_lower)
     if match:
-        column_content = match.group(1).strip()  # Extract column content (e.g., high)
-        column_name = match.group(2).strip()     # Extract column name (e.g., priority)
-        keyword = match.group(3).strip()         # Extract keyword (e.g., standby)
+        column_content = match.group(1).strip()
+        column_name = match.group(2).strip()
+        keyword = match.group(3).strip()
 
-        # Normalize column content dynamically
-        if column_name.lower() in column_normalization:
-            column_content_normalized = column_normalization[column_name.lower()].get(column_content.lower(), column_content)
+        column_mapped = map_synonym_to_column(column_name)
+        if not column_mapped:
+            return f"Column '{column_name}' not recognized."
+
+        column_normalization = {}
+        for column in df.columns:
+            if df[column].dtype == 'object':
+                unique_values = df[column].str.lower().unique()
+                normalization_map = {value.lower(): value for value in unique_values}
+                column_normalization[column.lower()] = normalization_map
+
+        if column_mapped in column_normalization:
+            column_content_normalized = column_normalization[column_mapped].get(column_content.lower(), column_content)
         else:
             return "Query not recognized or conditions not met."
 
-        # Filter DataFrame based on the extracted criteria
-        if column_name.lower() in df.columns:
-            filtered_df = df[(df[column_name].str.lower() == column_content_normalized.lower()) & 
+        if column_mapped in df.columns:
+            filtered_df = df[(df[column_mapped].str.lower() == column_content_normalized.lower()) & 
                              (df.apply(lambda row: keyword.lower() in row['summary'].lower() or keyword.lower() in row['description'].lower(), axis=1))]
         else:
             return "Query not recognized or conditions not met."
@@ -224,10 +173,36 @@ def handle_complex_queries(query):
         if not filtered_df.empty:
             return filtered_df.to_dict(orient='records')
         else:
-            return f"No matching issues found with {column_content_normalized} {column_name} related to {keyword}."
-    
+            return f"No matching issues found with {column_content_normalized} {column_mapped} related to {keyword}."
+
+    # Check for list query (related to keyword or column-based)
+    match = list_keyword_pattern.search(query_lower)
+    if match:
+        keyword = match.group(1)
+        filtered_rows = df[df.apply(lambda row: keyword in row['summary'].lower() or keyword in row['description'].lower(), axis=1)]
+        if not filtered_rows.empty:
+            return filtered_rows.to_dict(orient='records')
+        else:
+            return "No matching issues found."
+
+    match = column_pattern.search(query_lower)
+    if match:
+        column_name = match.group(1)
+        column_content = match.group(2)
+
+        column_name_mapped = map_synonym_to_column(column_name)
+        if column_name_mapped:
+            filtered_rows = df[df[column_name_mapped].str.lower() == column_content.lower()]
+            if not filtered_rows.empty:
+                return filtered_rows.to_dict(orient='records')
+            else:
+                return f"No issues found with {column_name_mapped} as {column_content}."
+        else:
+            return f"Column '{column_name}' not recognized."
+
     return "Query not recognized or conditions not met."
-    ...
+
+
 
 def handle_similarity_check(user_input, dataframe):
     # Updated
@@ -247,24 +222,12 @@ def handle_similarity_check(user_input, dataframe):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index2.html')
 
-@app.route('/simple_query', methods=['POST'])
-def simple_query():
+@app.route('/retrieve_query', methods=['POST'])
+def retrieve_query():
     query = request.form['query']
-    response = handle_simple_queries(query)
-    return jsonify(response)
-
-@app.route('/list_query', methods=['POST'])
-def list_query():
-    query = request.form['query']
-    response = handle_list_queries(query)
-    return jsonify(response)
-
-@app.route('/complex_query', methods=['POST'])
-def complex_query():
-    query = request.form['query']
-    response = handle_complex_queries(query)
+    response = handle_query(query)
     return jsonify(response)
 
 @app.route('/check_similarity', methods=['POST'])

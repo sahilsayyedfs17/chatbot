@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Issue Assistant</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            margin: 20px;
+            padding: 30px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin: 10px;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        button:active {
+            background-color: #004494;
+        }
+        .sub-btn {
+            display: none;
+            margin-top: 20px;
+        }
+        .response {
+            margin-top: 20px;
+            text-align: left;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fafafa;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 16px; /* Increased padding for better spacing */
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        td {
+            background-color: #ffffff;
+        }
+        input[type="text"] {
+            padding: 12px; /* Adjusted input padding for consistency */
+            width: calc(100% - 24px);
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hey, How may I assist you?</h1>
+        <button onclick="toggleVisibility('retrieve-query')">Retrieve Issues</button>
+        <button onclick="toggleVisibility('check-similarity')">Check Similarity</button>
+        
+        <div id="retrieve-query" class="sub-btn">
+            <h2>Retrieve Issues</h2>
+            <input type="text" id="retrieve-query-input" placeholder="Enter your query">
+            <button onclick="submitRetrieveQuery()">Ask</button>
+        </div>
+        
+        <div id="check-similarity" class="sub-btn">
+            <h2>Check Similarity</h2>
+            <input type="text" id="similarity-query-input" placeholder="Give me your issue to check similarity">
+            <button onclick="submitCheckSimilarity()">Check</button>
+        </div>
+        
+        <div class="response" id="response" style="display: none;"></div>
+    </div>
+    
+    <script>
+        function toggleVisibility(id) {
+            const sections = ['retrieve-query', 'check-similarity'];
+            sections.forEach(section => {
+                document.getElementById(section).style.display = 'none';
+            });
+            document.getElementById(id).style.display = 'block';
+            document.getElementById('response').style.display = 'none';
+        }
+        
+        function submitRetrieveQuery() {
+            const query = document.getElementById('retrieve-query-input').value;
+            fetch('/retrieve_query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `query=${query}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResponse(data);
+            });
+        }
+        
+        function submitCheckSimilarity() {
+            const query = document.getElementById('similarity-query-input').value;
+            fetch('/check_similarity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `query=${query}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                displaySimilarityResponse(data);
+            });
+        }
+        
+        function displayResponse(data) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.style.display = 'block';
+            if (Array.isArray(data) && data.length > 0) {
+                let table = '<table><tr>';
+                for (const key in data[0]) {
+                    table += `<th>${key}</th>`;
+                }
+                table += '</tr>';
+                data.forEach(row => {
+                    table += '<tr>';
+                    for (const key in row) {
+                        table += `<td>${row[key]}</td>`;
+                    }
+                    table += '</tr>';
+                });
+                table += '</table>';
+                responseDiv.innerHTML = table;
+            } else {
+                responseDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+            }
+        }
+        
+        function displaySimilarityResponse(data) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.style.display = 'block';
+            let table = '<table><tr>';
+            for (const key in data.most_similar_row) {
+                table += `<th>${key}</th>`;
+            }
+            table += '</tr><tr>';
+            for (const key in data.most_similar_row) {
+                table += `<td>${data.most_similar_row[key]}</td>`;
+            }
+            table += '</tr></table>';
+            responseDiv.innerHTML = `<p><strong>Most similar issue:</strong></p>${table}<p><strong>Similarity score:</strong> ${data.similarity_score.toFixed(1)}%</p>`;
+        }
+    </script>
+</body>
+</html>
