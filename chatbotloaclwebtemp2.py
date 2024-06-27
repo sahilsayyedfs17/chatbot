@@ -4,30 +4,22 @@ import re
 from collections import defaultdict
 from transformers import pipeline, TapasTokenizer, TapasForQuestionAnswering
 import json
-import difflib
 from sentence_transformers import SentenceTransformer, util
-
-from sentence_transformers import SentenceTransformer, InputExample, losses, models, datasets
+import torch
 
 # Initialize Flask app
 app = Flask(__name__)
 
+# Load models and data
 model_path = "./models/tapas"
 model = TapasForQuestionAnswering.from_pretrained(model_path)
 tokenizer = TapasTokenizer.from_pretrained(model_path)
+tqa = pipeline("table-question-answering", model=model, tokenizer=tokenizer)
 
-# Initialize the TQA pipeline
-tqa = pipeline("table-question-answering", model=model,tokenizer=tokenizer)
-
-# Load CSV into a DataFrame
 df = pd.read_csv('sample jira extract.csv')
 
-# Initialize the SentenceTransformer model
-#sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
-
-model_path = "models\sentence-transformer"
-
-sentence_model = SentenceTransformer(model_path)
+# Load the fine-tuned SentenceTransformer model
+sentence_model = SentenceTransformer('./output/fine-tuned-model')
 
 # Dictionary to store question-answer pairs
 qa_pairs = {}
@@ -37,11 +29,8 @@ column_synonyms = {}
 for column in df.columns:
     synonyms = [column.lower(), column.capitalize(), column.upper(), column]
     column_synonyms[column.lower()] = synonyms
-# Functions
 
-
-
-#manually updating additional (in above func it is dynamically done by extracting col names)
+# Manually update additional synonyms
 column_synonyms.update({
     "priority": ["importance", "urgency", "Priority"],
     "summary": ["title", "heading", "Summary"],
@@ -50,31 +39,25 @@ column_synonyms.update({
     "assignee": ["assigned_to", "responsible", "assigned to", "assignee", "asign"],
     "created_date": ["date_created", "creation_date", "it created"],
     "labels": ["tags", "label"],
-    "issue_key": ["issue key", "issue", "Issue Key", "Issue key", "ticket no", "Ticket no", "Ticket", "Ticked Id",
-                  "ticket Id", "ticket id"],
+    "issue_key": ["issue key", "issue", "Issue Key", "Issue key", "ticket no", "Ticket no", "Ticket", "Ticked Id", "ticket Id", "ticket id"],
     "reporter": ["Reporter", "reported", "has raised"],
     "status": ["Status", "state"]
 })
 
-
 def map_synonym_to_column(word):
     word_lower = word.lower()
     for column, synonyms in column_synonyms.items():
-        # Check both the column name and its synonyms
         if word_lower == column or word_lower in map(str.lower, synonyms):
             return column
-    return None    
+    return None
 
 def ask_question(query):
-    # Initialize regex patterns
     condition_pattern = re.compile(r'(\w+)\s+as\s+(\w+)')
     keyword_pattern = re.compile(r'related\s+to\s+(\w+)')
 
-    # Initialize conditions and keyword
     conditions = defaultdict(list)
     keyword = None
 
-    # Extract conditions and keyword from query
     for match in condition_pattern.finditer(query.lower()):
         column = match.group(1)
         value = match.group(2)
@@ -85,18 +68,15 @@ def ask_question(query):
     for match in keyword_pattern.finditer(query.lower()):
         keyword = match.group(1)
 
-    # Filter the DataFrame based on conditions
     filtered_df = df.copy()
     for column, values in conditions.items():
         if column in filtered_df.columns:
             filtered_df = filtered_df[filtered_df[column].str.lower().isin(values)]
 
-    # Apply keyword filter
     if keyword:
         filtered_df = filtered_df[filtered_df.apply(lambda row: keyword in row.astype(str).str.lower().values, axis=1)]
 
     return filtered_df.to_dict(orient='records')
-
 
 def learn_question_answer_pairs_from_file(file_path):
     with open(file_path, 'r') as f:
@@ -109,34 +89,21 @@ def learn_question_answer_pairs_from_file(file_path):
 def learn_question_answer_pair(question, answers):
     qa_pairs[question.lower()] = answers
 
-def calculate_similarity(query, text):
-    # Calculate similarity percentage using difflib
-    matcher = difflib.SequenceMatcher(None, query.lower(), text.lower())
-    return round(matcher.ratio() * 100, 2)
-
 def get_response(question):
-    # Check if the question exists in learned pairs
     if question.lower() in qa_pairs:
         return qa_pairs[question.lower()]
     else:
-        # If not found, use the existing logic to answer the question
         response = ask_question(question)
         return response
-
-import re
-
-# Assuming column_synonyms and map_synonym_to_column are defined as previously
 
 def handle_query(query):
     query_lower = query.lower()
     
-    # Patterns to identify query types
     issue_key_pattern = re.compile(r'\b([A-Za-z0-9]+-[0-9]+)\b')
     list_keyword_pattern = re.compile(r'related\s+to\s+(\w+)')
     column_pattern = re.compile(r'(\w+)\s+as\s+(\w+)')
     complex_pattern = re.compile(r'what\s+are\s+the\s+(.+?)\s+(.+?)\s+issues\s+related\s+to\s+(.+)')
 
-    # Check for simple query (issue key)
     match = issue_key_pattern.search(query)
     if match:
         issue_key = match.group(1)
@@ -152,7 +119,6 @@ def handle_query(query):
 
         return "Query does not specify a valid field (summary, description, issue_type, priority, assignee, created_date, labels)."
     
-    # Check for complex query
     match = complex_pattern.match(query_lower)
     if match:
         column_content = match.group(1).strip()
@@ -186,7 +152,6 @@ def handle_query(query):
         else:
             return f"No matching issues found with {column_content_normalized} {column_mapped} related to {keyword}."
 
-    # Check for list query (related to keyword or column-based)
     match = list_keyword_pattern.search(query_lower)
     if match:
         keyword = match.group(1)
@@ -207,49 +172,34 @@ def handle_query(query):
             if not filtered_rows.empty:
                 return filtered_rows.to_dict(orient='records')
             else:
-                return f"No issues found with {column_name_mapped} as {column_content}."
-        else:
-            return f"Column '{column_name}' not recognized."
+                return f"No matching issues found with {column_name_mapped} as {column_content}."
 
-    return "Query not recognized or conditions not met."
+    # Use the fine-tuned model for similarity search
+    query_embedding = sentence_model.encode(query, convert_to_tensor=True)
+    corpus = list(qa_pairs.keys())
+    corpus_embeddings = sentence_model.encode(corpus, convert_to_tensor=True)
+    hits = util.semantic_search(query_embedding, corpus_embeddings, top_k=1)
 
-
-
-def handle_similarity_check(user_input, dataframe):
-    # Updated
-    user_input_embedding = sentence_model.encode(user_input, convert_to_tensor=True)
-    summary_embeddings = sentence_model.encode(dataframe['summary'].tolist(), convert_to_tensor=True)
-    description_embeddings = sentence_model.encode(dataframe['description'].tolist(), convert_to_tensor=True)
+    if hits and hits[0]:
+        most_similar_question = corpus[hits[0][0]['corpus_id']]
+        similarity_score = hits[0][0]['score']
+        if similarity_score > 0.7:
+            return qa_pairs[most_similar_question]
     
-    summary_similarities = util.pytorch_cos_sim(user_input_embedding, summary_embeddings)
-    description_similarities = util.pytorch_cos_sim(user_input_embedding, description_embeddings)
-    
-    combined_similarities = (summary_similarities + description_similarities) / 2
-    most_similar_index = combined_similarities.argmax().item()
-    most_similar_row = dataframe.iloc[most_similar_index]
-    similarity_score = combined_similarities[0][most_similar_index].item() * 100
-    
-    return most_similar_row, similarity_score
+    return get_response(query)
 
-@app.route('/')
-def index():
-    return render_template('index2.html')
+@app.route("/")
+def home():
+    return render_template("index3temp.html")
 
-@app.route('/retrieve_query', methods=['POST'])
-def retrieve_query():
-    query = request.form['query']
-    response = handle_query(query)
-    return jsonify(response)
+@app.route("/get_answer", methods=["POST"])
+def get_answer():
+    user_input = request.form.get("query")
+    if user_input:
+        response = handle_query(user_input)
+        return jsonify(response)
+    return jsonify({"error": "No input provided"})
 
-@app.route('/check_similarity', methods=['POST'])
-def check_similarity():
-    query = request.form['query']
-    most_similar_row, similarity_score = handle_similarity_check(query, df)
-    return jsonify({
-        'most_similar_row': most_similar_row.to_dict(),
-        'similarity_score': similarity_score
-    })
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     learn_question_answer_pairs_from_file('qa_pairs.json')
     app.run(debug=True)
